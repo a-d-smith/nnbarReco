@@ -9,7 +9,8 @@
 #pragma link off all classes;
 #pragma link off all functions;
 
-#pragma link C++ class larlite::findVertex+;
+#pragma link C++ class larlite::vertexFinder+;
 //ADD_NEW_CLASS ... do not change this line
 #endif
+
 

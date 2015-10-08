@@ -1,48 +1,51 @@
 /**
- * \file findVertex.h
+ * \file vertexFinder.h
  *
  * \ingroup findVertex
  * 
- * \brief Class def header for a class findVertex
+ * \brief Class def header for a class vertexFinder
  *
- * @author rsjones
+ * @author rsjones/asmith
  */
 
 /** \addtogroup findVertex
 
     @{*/
 
-#ifndef LARLITE_FINDVERTEX_H
-#define LARLITE_FINDVERTEX_H
+#ifndef LARLITE_VERTEXFINDER_H
+#define LARLITE_VERTEXFINDER_H
 
 #include "Analysis/ana_base.h"
+#include "DataFormat/mcshower.h"
+#include "DataFormat/mctrack.h"
+
 
 namespace larlite {
   /**
-     \class findVertex
+     \class vertexFinder
      User custom analysis class made by SHELL_USER_NAME
    */
-  class findVertex : public ana_base{
+  class vertexFinder : public ana_base{
   
   public:
 
     /// Default constructor
-    findVertex(){ _name="findVertex"; _fout=0;}
+    vertexFinder(){ _name="vertexFinder"; _fout=0;}
 
     /// Default destructor
-    virtual ~findVertex(){}
+    virtual ~vertexFinder(){}
 
-    /** IMPLEMENT in findVertex.cc!
+    /** IMPLEMENT in vertexFinder.cc!
         Initialization method to be called before the analysis event loop.
     */ 
     virtual bool initialize();
 
-    /** IMPLEMENT in findVertex.cc! 
+    /** IMPLEMENT in vertexFinder.cc! 
         Analyze a data event-by-event  
     */
     virtual bool analyze(storage_manager* storage);
 
-    /** IMPLEMENT in findVertex.cc! 
+    /** IMPLEMENT in vertexFinder.cc! 
         Finalize method to be called after all events processed.
     */
     virtual bool finalize();

@@ -7,33 +7,29 @@ if len(sys.argv) < 2:
     sys.stderr.write(msg)
     sys.exit(1)
 
-from ROOT import gSystem
-from ROOT import larlite as fmwk
-from ROOT import ertool
-ertool.Manager
+from larlite import larlite as fmwk
 
 # Create ana_processor instance
 my_proc = fmwk.ana_processor()
 
 # Set input root file
 for x in xrange(len(sys.argv)-1):
-  f = sys.argv[x+1]
-  my_proc.add_input_file(f)
+    my_proc.add_input_file(sys.argv[x+1])
 
 # Specify IO mode
 my_proc.set_io_mode(fmwk.storage_manager.kREAD)
 
 # Specify output root file name
-#my_proc.set_ana_output_file("output/event_selection.root");
+my_proc.set_ana_output_file("from_test_ana_you_can_remove_me.root");
 
 # Attach an analysis unit ... here we use a base class which does nothing.
 # Replace with your analysis unit if you wish.
-
-my_proc.add_process(fmwk.findVertex())
+# my_proc.add_process(fmwk.ana_base())
+my_proc.add_process(fmwk.vertexFinder())
 
 print
 print  "Finished configuring ana_processor. Start event loop!"
-print  
+print
 
 # Let's run it.
 my_proc.run();
@@ -41,6 +37,6 @@ my_proc.run();
 # done!
 print
 print "Finished running ana_processor event loop!"
-print 
+print
 
 sys.exit(0)

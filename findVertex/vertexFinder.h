@@ -56,10 +56,11 @@ namespace larlite {
     virtual bool finalize();
 
     std::vector<TVector3> vertices;
-    std::vector<std::vector<int>> trackInVertex;
+    std::vector<std::vector<int>> idInVertex;
+    std::vector<std::vector<char>> typeInVertex;
     std::vector<TVector3> diffVect;
     double tol = 1;
-    int trackIndex;
+    int trackIndex, showerIndex;
 
   protected:
     

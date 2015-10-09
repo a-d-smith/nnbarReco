@@ -54,7 +54,9 @@ namespace larlite {
 
     diffVect.clear();
     vertices.clear();
-    trackInVertex.clear();
+    idInVertex.clear();
+    typeInVertex.clear();
+
     trackIndex = 0;
 
     // Loop over the tracks
@@ -64,9 +66,62 @@ namespace larlite {
 	if (trackIndex == 0){
 		vertices.push_back(startPoint);
 
-		std::vector<int> blankVector;
-		blankVector.push_back(trackIndex);
-		trackInVertex.push_back(blankVector);
+		std::vector<int> idVector;
+		idVector.push_back(trackIndex);
+		idInVertex.push_back(idVector);
+		
+		std::vector<char> typeVector;
+		typeVector.push_back('t');
+		typeInVertex.push_back(typeVector);
+	}
+	else{
+		bool foundVertex = false;
+		// Loop over all vertices found
+		for (unsigned int vertexIndex=0; vertexIndex<vertices.size(); vertexIndex++){
+			TVector3 diff;
+			diff = startPoint - vertices[vertexIndex];
+			diffVect.push_back(diff);
+
+			if (diff.Mag() <= tol){
+				double N = idInVertex[vertexIndex].size();
+				vertices[vertexIndex] = pow((N + 1),-1)*((N * vertices[vertexIndex]) + startPoint);
+				idInVertex[vertexIndex].push_back(trackIndex);
+				typeInVertex[vertexIndex].push_back('t');
+				foundVertex = true;
+				break;
+			}
+		}
+		if (!foundVertex){
+			vertices.push_back(startPoint);
+
+			std::vector<int> idVector;
+			idVector.push_back(trackIndex);
+			idInVertex.push_back(idVector);
+
+			std::vector<char> typeVector;
+			typeVector.push_back('t');
+			typeInVertex.push_back(typeVector);
+		}
+	}
+	
+	trackIndex++;
+    }
+
+    showerIndex = 0;
+    // Loop over the showers
+    for(auto const& mcs : *ev_mcs){
+	TVector3 startPoint(mcs.Start().X(), mcs.Start().Y(), mcs.Start().Z());
+
+	if (trackIndex == 0 && showerIndex == 0){
+		vertices.push_back(startPoint);
+
+		std::vector<int> idVector;
+		idVector.push_back(showerIndex);
+		idInVertex.push_back(idVector);
+
+		std::vector<char> typeVector;
+		typeVector.push_back('s');
+		typeInVertex.push_back(typeVector);
 	}
 	else{
 		bool foundVertex = false;
@@ -77,7 +132,10 @@ namespace larlite {
 			diffVect.push_back(diff);				
 
 			if (diff.Mag() <= tol){
-				trackInVertex[vertexIndex].push_back(trackIndex);
+				double N = idInVertex[vertexIndex].size();
+				vertices[vertexIndex] = pow((N + 1),-1)*((N * vertices[vertexIndex]) + startPoint);
+				idInVertex[vertexIndex].push_back(showerIndex);
+				typeInVertex[vertexIndex].push_back('s');
 				foundVertex = true;
 				break;
 			}
@@ -85,24 +143,29 @@ namespace larlite {
 		if (!foundVertex){
 			vertices.push_back(startPoint);
 
-			std::vector<int> blankVector;
-			blankVector.push_back(trackIndex);
-			trackInVertex.push_back(blankVector);
+			std::vector<int> idVector;
+			idVector.push_back(showerIndex);
+			idInVertex.push_back(idVector);
+
+			std::vector<char> typeVector;
+			typeVector.push_back('s');
+			typeInVertex.push_back(typeVector);
 		}
 	}
 	
-	trackIndex++;
+	showerIndex++;
     }
 
-    std::cout << "TOTAL TRACKS " << trackIndex << std::endl;
+    std::cout << "Total Tracks  : " << trackIndex << std::endl;
+    std::cout << "Total Showers : " << showerIndex << std::endl;
 
     for (unsigned int vertexIndex=0; vertexIndex<vertices.size(); vertexIndex++){
 	std::cout << "(x, y, z)  =  (";
 	std::cout << std::setw(10) << std::setprecision(3) << vertices[vertexIndex].x() << ", ";
 	std::cout << std::setw(10) << std::setprecision(3) << vertices[vertexIndex].y() << ", ";
 	std::cout << std::setw(10) << std::setprecision(3) << vertices[vertexIndex].z() << ") " << std::endl;
-    	for (unsigned int trackIndex=0; trackIndex<trackInVertex[vertexIndex].size(); trackIndex++){
-		std::cout << std::setw(3) << vertexIndex << " | " << std::setw(3) << trackInVertex[vertexIndex][trackIndex] << std::endl;
+    	for (unsigned int idIndex=0; idIndex<idInVertex[vertexIndex].size(); idIndex++){
+		std::cout << std::setw(3) << vertexIndex << " | " << typeInVertex[vertexIndex][idIndex] << " | " << std::setw(3) << idInVertex[vertexIndex][idIndex] << std::endl;
 	}
 	std::cout << "----------------------------------------" << std::endl;
     }

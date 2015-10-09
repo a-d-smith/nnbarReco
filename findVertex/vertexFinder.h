@@ -18,6 +18,11 @@
 #include "Analysis/ana_base.h"
 #include "DataFormat/mcshower.h"
 #include "DataFormat/mctrack.h"
+#include <iomanip>
+#include <vector>
+#include "TROOT.h"
+#include "TGraph.h"
+#include "TVector3.h"
 
 
 namespace larlite {
@@ -49,6 +54,12 @@ namespace larlite {
         Finalize method to be called after all events processed.
     */
     virtual bool finalize();
+
+    std::vector<TVector3> vertices;
+    std::vector<std::vector<int>> trackInVertex;
+    std::vector<TVector3> diffVect;
+    double tol = 1;
+    int trackIndex;
 
   protected:
     

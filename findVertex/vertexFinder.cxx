@@ -2,6 +2,8 @@
 #define LARLITE_VERTEXFINDER_CXX
 
 #include "vertexFinder.h"
+#include "TVector3.h"
+#include <vector>
 
 namespace larlite {
 
@@ -13,8 +15,6 @@ namespace larlite {
     // If you have a histogram to fill in the event loop, for example,
     // here is a good place to create one on the heap (i.e. "new TH1D"). 
     //
-
-    std::cout << "My love for particle physics is limitless" << std::endl;
 
     return true;
   }
@@ -38,9 +38,11 @@ namespace larlite {
     //   std::cout << "Event ID: " << my_pmtfifo_v->event_id() << std::endl;
     //
   
+    // Load in the shower and track data
     auto ev_mcs = storage->get_data<event_mcshower>("mcreco");
     auto ev_mct = storage->get_data<event_mctrack>("mcreco");
 
+    // Ensure these pointers are valid
     if(!ev_mcs){
       std::cout << "MCShower pointer invalid! Exiting..." << std::endl;
       exit(1);
@@ -50,9 +52,66 @@ namespace larlite {
       exit(1);
     }
 
+    diffVect.clear();
+    vertices.clear();
+    trackInVertex.clear();
+    trackIndex = 0;
+
+    // Loop over the tracks
     for(auto const& mct : *ev_mct){
-        std::cout << mct.Start().X() << std::endl;
+	TVector3 startPoint(mct.Start().X(), mct.Start().Y(), mct.Start().Z());
+
+	if (trackIndex == 0){
+		vertices.push_back(startPoint);
+
+		std::vector<int> blankVector;
+		blankVector.push_back(trackIndex);
+		trackInVertex.push_back(blankVector);
+	}
+	else{
+		bool foundVertex = false;
+		// Loop over all vertices found
+		for (unsigned int vertexIndex=0; vertexIndex<vertices.size(); vertexIndex++){
+			TVector3 diff;
+			diff = startPoint - vertices[vertexIndex];
+			diffVect.push_back(diff);				
+
+			if (diff.Mag() <= tol){
+				trackInVertex[vertexIndex].push_back(trackIndex);
+				foundVertex = true;
+				break;
+			}
+		}
+		if (!foundVertex){
+			vertices.push_back(startPoint);
+
+			std::vector<int> blankVector;
+			blankVector.push_back(trackIndex);
+			trackInVertex.push_back(blankVector);
+		}
+	}
+	
+	trackIndex++;
     }
+
+    std::cout << "TOTAL TRACKS " << trackIndex << std::endl;
+
+    for (unsigned int vertexIndex=0; vertexIndex<vertices.size(); vertexIndex++){
+	std::cout << "(x, y, z)  =  (";
+	std::cout << std::setw(10) << std::setprecision(3) << vertices[vertexIndex].x() << ", ";
+	std::cout << std::setw(10) << std::setprecision(3) << vertices[vertexIndex].y() << ", ";
+	std::cout << std::setw(10) << std::setprecision(3) << vertices[vertexIndex].z() << ") " << std::endl;
+    	for (unsigned int trackIndex=0; trackIndex<trackInVertex[vertexIndex].size(); trackIndex++){
+		std::cout << std::setw(3) << vertexIndex << " | " << std::setw(3) << trackInVertex[vertexIndex][trackIndex] << std::endl;
+	}
+	std::cout << "----------------------------------------" << std::endl;
+    }
+    std::cout << std::endl << std::endl;
+    /*
+    TGraph *graph = new  TGraph(i,X,Y);
+    graph->Draw();
+ 
+    std::cin.get();*/
 
     return true;
   }

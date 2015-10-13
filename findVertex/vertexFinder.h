@@ -58,10 +58,10 @@ namespace larlite {
     std::vector<TVector3> vertices;
     std::vector<std::vector<int>> idInVertex;
     std::vector<std::vector<char>> typeInVertex;
-    std::vector<TVector3> diffVect;
+    std::vector<std::vector<TVector3>> allStartPositions;
     double tol = 1;
     int trackIndex, showerIndex;
-
+    int evIndex = 0;
   protected:
     
   };

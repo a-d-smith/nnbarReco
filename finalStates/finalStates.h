@@ -60,6 +60,9 @@ namespace larlite {
     std::vector<double> pdgFound;
     std::vector<double> pdgCount;
     std::vector<int> numPrimary;
+    std::vector<std::vector<unsigned int>> pairIndices;
+    std::vector<TVector3> photonStart;
+    std::vector<TVector3> photonMom;
     bool found;
 
   protected:
